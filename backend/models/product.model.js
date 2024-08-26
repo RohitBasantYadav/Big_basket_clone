@@ -20,18 +20,29 @@ const productSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
+    strikedPrice:{
+        type:Number,
+        required:true,
+    },
     price:{
         type:Number,
+        required:true,
+    },
+    discountBadge:{
+        type:Number,
+        required:true,
+    },
+    size:{
+        type:String,
         required:true,
     },
     rating:{
         type:Number,
         default:2.5,
-        required:true
     },
     quantityInStock:{
         type:Number,
-        default:10,
+        default:20,
     },
 })
 

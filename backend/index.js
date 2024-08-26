@@ -1,10 +1,22 @@
 require("dotenv").config();
 const express = require("express");
-const connection = require("./db_config/db.js")
+const cors = require("cors");
+const connection = require("./db_config/db.js");
+const userRouter = require("./routes/user.route.js");
+const productRouter = require("./routes/product.route.js");
+const cartRouter = require("./routes/cart.route.js");
 
 const PORT = process.env.PORT || 4040;
 
 const app = express();
+
+// All middlewares
+app.use(cors());
+app.use(express.json());
+app.use("/user",userRouter);
+app.use("/products",productRouter);
+app.use("/cart",cartRouter);
+
 
 //Health check route
 app.get("/", (_, res) => {
