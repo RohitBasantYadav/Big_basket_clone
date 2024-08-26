@@ -1,0 +1,23 @@
+require("dotenv").config();
+const express = require("express");
+const connection = require("./db_config/db.js")
+
+const PORT = process.env.PORT || 4040;
+
+const app = express();
+
+//Health check route
+app.get("/", (_, res) => {
+    res.send("Server is running fine");
+})
+
+
+app.listen(PORT, async () => {
+    try {
+        await connection;
+        console.log(`Server is running on ${PORT} and connected to db`)
+    } catch (error) {
+        console.log(`Error while connecting to server or db ${error}`)
+    }
+
+})
