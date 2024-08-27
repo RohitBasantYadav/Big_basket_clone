@@ -15,7 +15,7 @@ const app = express();
 // All middlewares
 app.use(cors());
 app.use(express.json());
-app.use(limiter)
+// app.use(limiter)
 app.use("/user",userRouter);
 app.use("/products", authentication,productRouter);
 app.use("/cart",authentication,cartRouter);

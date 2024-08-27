@@ -13,12 +13,16 @@ const register = async (req, res) => {
         }
         bcrypt.hash(password, saltRound, async (err, hash) => {
             if (hash) {
+                if(name && email){
                 const registerUser = new UserModel({ name, email, password: hash })
                 await registerUser.save();
                 res.status(201).json({ msg: `User Registered Successfully` });
+                }else{
+                    res.status(400).json({msg:`Please provide all the details for registration`});
+                }
             }
             else {
-                res.status(500).json({ msg: `Error while hashing password: ${err}` });
+                res.status(500).json({ msg: `Error while hashing password / Password not found: ${err}` });
             }
         })
     } catch (error) {

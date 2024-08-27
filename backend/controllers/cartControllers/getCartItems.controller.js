@@ -2,6 +2,7 @@ const CartModel = require("../../models/cart.model")
 
 const getCartItems = async(req,res)=>{
     const {userId} = req.body;
+    // console.log(userId)
     try {
         const cartItems = await CartModel.find({userId});
         if(cartItems){

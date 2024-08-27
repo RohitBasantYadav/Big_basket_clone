@@ -5,7 +5,7 @@ const getSpecificProduct = require("../controllers/productControllers/getSpecifi
 
 const productRouter = express.Router();
 
-productRouter.post("/add-product",addProduct);
+productRouter.post("/addProduct",addProduct);
 productRouter.get("/allProducts",getProducts);
 productRouter.get("/singleProduct/:id",getSpecificProduct);
 
