@@ -6,6 +6,7 @@ const userRouter = require("./routes/user.route.js");
 const productRouter = require("./routes/product.route.js");
 const cartRouter = require("./routes/cart.route.js");
 const authentication = require("./middlewares/authentication.middleware.js");
+const limiter = require("./middlewares/ratelimiter.middleware.js");
 
 const PORT = process.env.PORT || 4040;
 
@@ -14,6 +15,7 @@ const app = express();
 // All middlewares
 app.use(cors());
 app.use(express.json());
+app.use(limiter)
 app.use("/user",userRouter);
 app.use("/products", authentication,productRouter);
 app.use("/cart",authentication,cartRouter);
