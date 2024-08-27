@@ -44,7 +44,7 @@ const productSchema = new mongoose.Schema({
         type:Number,
         default:20,
     },
-})
+},{versionKey:false})
 
 
 const ProductModel = mongoose.model("Product",productSchema);

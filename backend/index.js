@@ -5,6 +5,7 @@ const connection = require("./db_config/db.js");
 const userRouter = require("./routes/user.route.js");
 const productRouter = require("./routes/product.route.js");
 const cartRouter = require("./routes/cart.route.js");
+const authentication = require("./middlewares/authentication.middleware.js");
 
 const PORT = process.env.PORT || 4040;
 
@@ -14,8 +15,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/user",userRouter);
-app.use("/products",productRouter);
-app.use("/cart",cartRouter);
+app.use("/products", authentication,productRouter);
+app.use("/cart",authentication,cartRouter);
 
 
 //Health check route

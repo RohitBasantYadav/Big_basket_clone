@@ -13,7 +13,7 @@ const login = async(req,res)=>{
         }
         bcrypt.compare(password,checkUserPresent.password,(err,result)=>{
             if(result){
-                const accessToken = jwt.sign({userId:checkUserPresent._id},process.env.ACCESS_TOKEN_SECRET_KEY,{expiresIn:"3h"});
+                const accessToken = jwt.sign({userId:checkUserPresent._id},process.env.ACCESS_TOKEN_SECRET_KEY,{expiresIn:"6h"});
                 const refreshToken = jwt.sign({userId:checkUserPresent._id},process.env.REFRESH_TOKEN_SECRET_KEY,{expiresIn:"1d"});
                 res.status(200).json({msg:`Login Successful`,accessToken,refreshToken});
             }
