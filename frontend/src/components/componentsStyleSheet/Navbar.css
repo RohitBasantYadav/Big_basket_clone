@@ -1,0 +1,9 @@
+a:hover{
+    color: #d35d5d;
+}
+
+a.active{
+    color: #d35d5d;
+    background-color: #e8adad;
+    border-radius: 4px;
+}
