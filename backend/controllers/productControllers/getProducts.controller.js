@@ -31,7 +31,7 @@ const getProducts = async (req, res) => {
     try {
         const product = await ProductModel.find(filter).sort(sortBy);
         if (product) {
-            res.status(200).json({ msg: `Products:`, totalProducta: product.length, data: product });
+            res.status(200).json({ msg: `Products:`, totalProduct: product.length, data: product });
         } else {
             res.status(404).json({ msg: `Product not found` });
         }
