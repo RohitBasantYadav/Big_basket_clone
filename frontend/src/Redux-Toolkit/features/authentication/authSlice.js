@@ -15,10 +15,10 @@ export const fetchToken = createAsyncThunk("fetchToken", async (userDetails) => 
     }
 
 });
-
+const user = JSON.parse(localStorage.getItem("user"));
 // Initial state
 const initialState = {
-    isLoggedIn: false,
+    isLoggedIn: user.isLoggedIn || false,
     accessToken: null,
     refreshToken: null,
     error: false
@@ -54,7 +54,7 @@ const authSlice = createSlice({
             // localStorage.setItem("refreshToken", action.payload.refreshToken);
         });
         builder.addCase(fetchToken.rejected, (state, action) => {
-            console.log(`Error while login: ${action.error.message}`)
+            // console.log(`Error while login: ${action.error.message}`)
             state.error = action.error.message;
         })
     }
