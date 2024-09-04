@@ -7,6 +7,7 @@ import Nandini from '../pages/Nandini'
 import Tea from '../pages/Tea'
 import Login from '../pages/Login'
 import Profile from '../pages/Profile'
+import SignUp from '../pages/SignUp'
 
 const AllRoutes = () => {
   return (
@@ -19,6 +20,7 @@ const AllRoutes = () => {
         <Route path='/nandini' element={<Nandini/>}/>
         <Route path='/tea' element={<Tea/>}/>
         <Route path='/login' element={<Login/>}/>
+        <Route path='/signup' element={<SignUp/>}/>
         <Route path='/profile' element={<Profile/>}/>
       </Routes>
     </div>

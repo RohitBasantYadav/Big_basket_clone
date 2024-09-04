@@ -1,9 +1,8 @@
 import { Box, Heading } from '@chakra-ui/react'
-import React from 'react'
 
 const Footer = () => {
   return (
-    <Box>
+    <Box position="relative" bottom="0">
         <Heading>This is Footer</Heading>
     </Box>
   )

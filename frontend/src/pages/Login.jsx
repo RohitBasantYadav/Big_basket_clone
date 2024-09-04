@@ -16,7 +16,8 @@ import {
   ModalOverlay,
   VStack,
   SimpleGrid,
-  InputRightElement
+  InputRightElement,
+  useToast
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
@@ -31,28 +32,36 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchToken } from '../Redux-Toolkit/features/authentication/authSlice';
 
 const Login = () => {
+
   const navigate = useNavigate();
+
+  // Chakra Ui Hooks
+  const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
+
+  // React Hooks
   const [userDetail, setUserDetail] = useState({
     email: "",
     password: "",
   })
 
   const dispatch = useDispatch();
-  const state = useSelector((state) => state.auth.isLoggedIn)
- 
-  
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  // console.log(isLoggedIn)
+  // console.log(error)
+
 
   useEffect(() => {
     onOpen();
     const userDetail = JSON.parse(localStorage.getItem("user"));
     // Checking if user is loggedIn or not from localstorage.
-    if(userDetail?.isLoggedIn){
+    if (userDetail?.isLoggedIn) {
       navigate("/")
     }
-  }, [state])
+
+  }, [isLoggedIn])
 
   // Handling all the Input 
   const handleChange = (e) => {
@@ -64,16 +73,46 @@ const Login = () => {
   // hadling after Login button is Clicked
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(fetchToken(userDetail));
+    //dispatching user
     // console.log(dispatch(fetchToken(userDetail)))
+
+    //Dispatching fetchToken for Login Action
+    const dispatchedAction = dispatch(fetchToken(userDetail));
+
+    // Handling fetchToken for showing Toast 
+    dispatchedAction.then((res) => {
+      console.log(res.error.message)
+      const statusCode = res.error.message;
+      if (statusCode == "400" || statusCode == "404") {
+        toast({
+          position: "top",
+          title: `Invalid Credentials`,
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        })
+      } else {
+        toast({
+          position: "top",
+          title: `Login Successfull`,
+          status: "success",
+          duration: 4000,
+          isClosable: true,
+        })
+      }
+
+    })
+
     setUserDetail({
       email: "",
       password: ""
-    })
+    });
   }
+  // Toast Section 
+
 
   // Close Button of Modal
-  const handleClose = ()=>{
+  const handleClose = () => {
     onClose();
     navigate("/")
   }
@@ -114,7 +153,7 @@ const Login = () => {
 
             {/* Left-side Content */}
             <VStack bgColor="black" color="white" align="flex-start">
-              <ModalHeader>Login</ModalHeader>
+              <ModalHeader textDecoration="underline" textDecorationColor="#cc0001">Login</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
 
@@ -129,7 +168,7 @@ const Login = () => {
                     placeholder="Enter Email Id"
                     isRequired={true} bgColor="white"
                     color="black"
-                    mb={10}
+                    mb={4}
                     _focus={{ outlineColor: "green" }} />
 
                   {/* Password Input field */}
@@ -142,7 +181,7 @@ const Login = () => {
                       type={show ? 'text' : 'password'}
                       placeholder='Enter password'
                       isRequired={true}
-                      mb={10}
+                      mb={4}
                       bgColor="white"
                       color="black"
                       _focus={{ outlineColor: "green" }}
@@ -157,6 +196,7 @@ const Login = () => {
                   {/* On Submit Input Field */}
                   <Input cursor="pointer" type="submit" value="Login" bgColor="#cc0001" color="white" border="none" />
                 </form>
+                <Button onClick={() => navigate("/signup")} bgColor="green" color="white" border="none" mt={4} w="100%" colorScheme="none">Create New Account</Button>
               </ModalBody>
             </VStack>
           </HStack>

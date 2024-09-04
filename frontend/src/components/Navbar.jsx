@@ -31,12 +31,13 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const dispatch = useDispatch();
   const state = useSelector((state)=>state.auth.isLoggedIn)
+  // console.log(state);
 
   useEffect(()=>{
     const userDetail = JSON.parse(localStorage.getItem("user"));
     // Checking if user is loggedIn or not from localstroage.
     setIsLoggedIn(userDetail?.isLoggedIn);
-  },[isLoggedIn,state])
+  },[state,isLoggedIn])
 
   const handleLogout = ()=>{
     dispatch(logout());
@@ -75,7 +76,7 @@ const Navbar = () => {
   ];
 
   return (
-    <Stack mb={8} boxShadow="md" pb={4} position="sticky" top="0" zIndex={50}>
+    <Stack mb={8} boxShadow="md" pb={4} position="sticky" top="0" zIndex={50} bgColor="white">
       {/* Upper Navbar section*/}
       <HStack spacing={4} justify="center" align="center">
         <Box>
