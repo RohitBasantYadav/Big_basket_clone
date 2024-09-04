@@ -124,7 +124,15 @@ const FruitsAndVegetables = () => {
 
       <Box m="10px 0">
         <SimpleGrid columns={4} spacing={5}>
-        {products.map((product)=><ProductCards key={product._id} />)}
+        {products.map((product)=><ProductCards key={product._id} 
+        imageUrl={product.imageUrl} 
+        discountBadge={product.discountBadge} 
+        brandName={product.brandName} 
+        productName={product.productName} 
+        size={product.size} 
+        rating={product.rating}
+        price={product.price} 
+        strikedPrice={product.strikedPrice} />)}
         </SimpleGrid>
       </Box>
     </Box>
