@@ -1,4 +1,3 @@
-import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Home from '../pages/Home'
 import FruitsAndVegetables from '../pages/FruitsAndVegetables'
@@ -7,6 +6,7 @@ import Milk from '../pages/Milk'
 import Nandini from '../pages/Nandini'
 import Tea from '../pages/Tea'
 import Login from '../pages/Login'
+import Profile from '../pages/Profile'
 
 const AllRoutes = () => {
   return (
@@ -19,6 +19,7 @@ const AllRoutes = () => {
         <Route path='/nandini' element={<Nandini/>}/>
         <Route path='/tea' element={<Tea/>}/>
         <Route path='/login' element={<Login/>}/>
+        <Route path='/profile' element={<Profile/>}/>
       </Routes>
     </div>
   )

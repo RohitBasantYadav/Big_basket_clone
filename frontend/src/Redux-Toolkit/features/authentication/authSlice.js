@@ -6,15 +6,15 @@ export const fetchToken = createAsyncThunk("fetchToken", async (userDetails) => 
     try {
         const baseUrl = import.meta.env.VITE_API_URL;
         const res = await axios.post(`${baseUrl}/user/auth/login`, userDetails);
-        console.log(res.data.accessToken, res.data.refreshToken)
         // console.log(data.token);
-        return res.data;
+        // console.log(res.data.accessToken, res.data.refreshToken)
+        return res?.data;
     } catch (error) {
-        console.error("Error while logging in:", error);
-        return Promise.reject(error);
+        // console.log(error.response.status)
+        return Promise.reject(error.response.status);
     }
 
-})
+});
 
 // Initial state
 const initialState = {
@@ -36,19 +36,22 @@ const authSlice = createSlice({
             state.accessToken = null;
             state.refreshToken = null;
             state.error = false;
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
+            // localStorage.removeItem("accessToken");
+            // localStorage.removeItem("refreshToken");
+            localStorage.setItem("user",JSON.stringify(state));
         }
     },
     // login logic is here
     extraReducers: (builder) => {
         builder.addCase(fetchToken.fulfilled, (state, action) => {
             // console.log(action.type)
+            // console.log(action.payload)
             state.isLoggedIn = true;
             state.accessToken = action.payload.accessToken;
             state.refreshToken = action.payload.refreshToken;
-            localStorage.setItem("accessToken", action.payload.accessToken);
-            localStorage.setItem("refreshToken", action.payload.refreshToken);
+            localStorage.setItem("user",JSON.stringify(state));
+            // localStorage.setItem("accessToken", action.payload.accessToken);
+            // localStorage.setItem("refreshToken", action.payload.refreshToken);
         });
         builder.addCase(fetchToken.rejected, (state, action) => {
             console.log(`Error while login: ${action.error.message}`)
