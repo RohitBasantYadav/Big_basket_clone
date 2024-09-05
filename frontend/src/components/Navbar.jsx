@@ -14,6 +14,7 @@ import {
   MenuList,
   MenuItem,
   Divider,
+  Text
 } from "@chakra-ui/react";
 import { ArrowRightIcon, SearchIcon } from "@chakra-ui/icons";
 import { FaBagShopping, FaCaretDown, FaCompass } from "react-icons/fa6";
@@ -22,7 +23,7 @@ import { useNavigate, NavLink as ReactRouteLink } from 'react-router-dom';
 import './componentsStyleSheet/Navbar.css';
 import logo from "../assets/big_basket_logo.png";
 import { useEffect, useState } from "react";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../Redux-Toolkit/features/authentication/authSlice";
 
 
@@ -30,16 +31,17 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const dispatch = useDispatch();
-  const state = useSelector((state)=>state.auth.isLoggedIn)
+  const state = useSelector((state) => state.auth.isLoggedIn)
+  const {cartItem} = useSelector((state) => state.cart)
   // console.log(state);
 
-  useEffect(()=>{
+  useEffect(() => {
     const userDetail = JSON.parse(localStorage.getItem("user"));
     // Checking if user is loggedIn or not from localstroage.
     setIsLoggedIn(userDetail?.isLoggedIn);
-  },[state,isLoggedIn])
+  }, [state, isLoggedIn])
 
-  const handleLogout = ()=>{
+  const handleLogout = () => {
     dispatch(logout());
     navigate("/login")
   }
@@ -78,10 +80,15 @@ const Navbar = () => {
   return (
     <Stack mb={8} boxShadow="md" pb={4} position="sticky" top="0" zIndex={50} bgColor="white">
       {/* Upper Navbar section*/}
+
       <HStack spacing={4} justify="center" align="center">
+
+        {/* Logo */}
         <Box>
           <Image onClick={() => navigate("/")} cursor="pointer" boxSize={65} w="100%" src={logo} alt="logo" />
         </Box>
+
+        {/* Search Box */}
         <Box w="40%">
           <InputGroup>
             <InputLeftElement pointerEvents='none'>
@@ -90,31 +97,42 @@ const Navbar = () => {
             <Input type='search' focusBorderColor="green.300" placeholder='Search for Products...' />
           </InputGroup>
         </Box>
+
+        {/* Location Button */}
         <Button leftIcon={<FaCompass />} fontSize={12} colorScheme='gray' variant='solid'>
           Select Location
         </Button>
 
         {/* SignUp/Login button */}
         {
-          isLoggedIn?
-          // Profile Section
-          // <Button onClick={()=>navigate("/profile")} color="black" fontSize={30} bgColor="gray.100">{<IoMdContact />}</Button>
-          <Menu>
-          <MenuButton as={IconButton} icon={<IoMdContact />} color="black" fontSize={30} bgColor="gray.100" />
-          <MenuList>
-             <MenuItem as={ReactRouteLink} to="/profile" >Profile</MenuItem>
-             <MenuItem onClick={handleLogout} >Logout</MenuItem>       
-          </MenuList>
+          isLoggedIn ?
+            // Profile Section
+            // <Button onClick={()=>navigate("/profile")} color="black" fontSize={30} bgColor="gray.100">{<IoMdContact />}</Button>
+            <Menu>
+              <MenuButton as={IconButton} icon={<IoMdContact />} color="black" fontSize={30} bgColor="gray.100" />
+              <MenuList>
+                <MenuItem as={ReactRouteLink} to="/profile" >Profile</MenuItem>
+                <MenuItem onClick={handleLogout} >Logout</MenuItem>
+              </MenuList>
 
-        </Menu>
-          :
-          <Button onClick={()=>navigate("/login")} color="white" fontSize={12} bgColor="black" _hover={{ color: "white", bgColor: "black" }}>Login/ Sign Up</Button>
+            </Menu>
+            :
+            <Button onClick={() => navigate("/login")} color="white" fontSize={12} bgColor="black" _hover={{ color: "white", bgColor: "black" }}>Login/ Sign Up</Button>
         }
-        
+
 
         {/* CART Button */}
-        <IconButton colorScheme="red" icon={<FaBagShopping />} />
+        <HStack position="relative" spacing={0}>
+        <IconButton  onClick={()=>navigate("/cart")} colorScheme="red" icon={<FaBagShopping />} />
+        {
+          cartItem.length>0?
+          <Text position="absolute" bottom={0} right={0} borderRadius="5px" p="0px 6px" bgColor="black" color="white">{cartItem.length}</Text>
+          :
+          null
+        }
+        </HStack>
       </HStack>
+
 
       {/* Lower Navbar section */}
       <HStack spacing={4} justify="center" align="center">

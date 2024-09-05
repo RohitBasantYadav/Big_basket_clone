@@ -1,42 +1,102 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Divider, Heading, HStack, Menu, MenuButton, MenuItem, MenuList, SimpleGrid, Skeleton, Stack, Text } from '@chakra-ui/react'
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Divider, Heading, HStack, Menu, MenuButton, MenuItem, MenuItemOption, MenuList, MenuOptionGroup, SimpleGrid, Skeleton, Stack, Text } from '@chakra-ui/react'
 import { AddIcon } from "@chakra-ui/icons";
 import ProductCards from '../components/ProductCards';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { logout } from '../Redux-Toolkit/features/authentication/authSlice';
 
 
 const FruitsAndVegetables = () => {
+
+  // React-router-dom hooks
+  const navigate = useNavigate();
+
+  // React-redux hooks
+  const dispatch = useDispatch();
+
+  // React hooks
   const [products, setProducts] = useState([]);
   const [totalProduct, setTotalProduct] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [filterValue,setFilterValue] = useState("");
+  const [sortingValue,setSortingValue] = useState("");
 
   const baseUrl = import.meta.env.VITE_API_URL;
 
-  const fetchProduct = async (token) => {
+  // Fetching product Data 
+  const fetchProduct = async (token,filterValue,sortingValue) => {
     setIsLoading(true)
     try {
+      const queryParams = {};
+
+      if(filterValue){
+        queryParams.brandName = filterValue;
+      }
+      
+            if(sortingValue == "priceLH"){
+              queryParams.sort = "price",
+              queryParams.order = "asc"
+            }
+      
+            if(sortingValue == "priceHL"){
+              queryParams.sort = "price",
+              queryParams.order = "desc"
+            }
+      
+            if(sortingValue == "discountLH"){
+              queryParams.sort = "discountBadge",
+              queryParams.order = "asc"
+            }
+      
+            if(sortingValue == "discountHL"){
+              queryParams.sort = "discountBadge",
+              queryParams.order = "desc"
+            }
+      
       const res = await axios.get(`${baseUrl}/products/allProducts?category=Fruits%20%26%20Vegetables`, {
         headers: {
           "Authorization": `Bearer ${token}`
-        }
+        },
+        params:queryParams
       });
-      console.log(res.data)
-      setTotalProduct(res.data.totalProduct)
+      // console.log("product",res)
+      // console.log(res.data)
+      setTotalProduct(res?.data?.totalProduct)
       setProducts(res?.data?.data)
       setIsLoading(false)
-    } catch (error) {
+    }
+    catch (error) {
       setError(error)
       setIsLoading(false);
+      if (error?.response?.status === 401) {
+        dispatch(logout());
+        navigate("/login")
+      }
     }
 
   }
 
+
+  // Use Effect for handling sideEffect
   useEffect(() => {
     const { accessToken } = JSON.parse(localStorage.getItem("user"));
-    fetchProduct(accessToken)
-  }, [])
+    fetchProduct(accessToken,filterValue,sortingValue)
+  }, [filterValue,sortingValue]);
 
+  // Filter menu function
+  const handleFiltering =(e)=>{
+    setFilterValue(e);
+  };
+
+  // Sorting menu function
+  const handleSorting = (e)=>{
+    setSortingValue(e);
+  }
+
+  // Loading Component
   if (isLoading) {
     return <Stack>
       <Skeleton height="100px" w="80%" m="auto"></Skeleton>
@@ -45,6 +105,8 @@ const FruitsAndVegetables = () => {
       <Skeleton height="100px" w="80%" m="auto"></Skeleton>
     </Stack>
   }
+
+  // Error Component
   if (error) {
     return <Alert
       status='error'
@@ -65,7 +127,7 @@ const FruitsAndVegetables = () => {
     </Alert>
   }
 
-  
+
   return (
     <Box w="80%" m="auto">
       <Heading fontSize={24} textAlign="center">Fruits & Vegetables Page</Heading>
@@ -74,7 +136,7 @@ const FruitsAndVegetables = () => {
           <Box>
 
             {/* Filter Menu */}
-            <Menu>
+            <Menu gutter={0}>
               <MenuButton as={Button} rightIcon={<AddIcon />}
                 variant="outline"
                 borderRadius="none"
@@ -85,17 +147,15 @@ const FruitsAndVegetables = () => {
               >
                 Filter by brands
               </MenuButton>
-              <MenuList>
-                <MenuItem>Download</MenuItem>
-                <MenuItem>Create a Copy</MenuItem>
-                <MenuItem>Mark as Draft</MenuItem>
-                <MenuItem>Delete</MenuItem>
-                <MenuItem>Attend a Workshop</MenuItem>
+              <MenuList borderRadius="0px">
+                <MenuOptionGroup onChange={handleFiltering} title='Filter' type='radio'>
+                  <MenuItemOption value='fresho!'>fresho!</MenuItemOption>
+                </MenuOptionGroup>
               </MenuList>
             </Menu>
 
             {/* Sorting Menu */}
-            <Menu>
+            <Menu gutter={0}>
               <MenuButton as={Button} rightIcon={<AddIcon />}
                 variant="outline"
                 borderRadius="none"
@@ -104,12 +164,14 @@ const FruitsAndVegetables = () => {
               >
                 Sort by
               </MenuButton>
-              <MenuList>
-                <MenuItem>Download</MenuItem>
-                <MenuItem>Create a Copy</MenuItem>
-                <MenuItem>Mark as Draft</MenuItem>
-                <MenuItem>Delete</MenuItem>
-                <MenuItem>Attend a Workshop</MenuItem>
+              <MenuList borderRadius="0px">
+                <MenuOptionGroup onChange={handleSorting} title='Sort by' type='radio'>
+                  {/* <MenuItemOption value=''>Sort by</MenuItemOption> */}
+                  <MenuItemOption value='priceLH'>Price, low to high</MenuItemOption>
+                  <MenuItemOption value='priceHL'>Price, high to low</MenuItemOption>
+                  <MenuItemOption value='discountLH'>% OFF, low to high</MenuItemOption>
+                  <MenuItemOption value='discountHL'>% OFF, high to low</MenuItemOption>
+                </MenuOptionGroup>
               </MenuList>
             </Menu>
 
@@ -124,15 +186,17 @@ const FruitsAndVegetables = () => {
 
       <Box m="10px 0">
         <SimpleGrid columns={4} spacing={5}>
-        {products.map((product)=><ProductCards key={product._id} 
-        imageUrl={product.imageUrl} 
-        discountBadge={product.discountBadge} 
-        brandName={product.brandName} 
-        productName={product.productName} 
-        size={product.size} 
-        rating={product.rating}
-        price={product.price} 
-        strikedPrice={product.strikedPrice} />)}
+          {products.map((product) => <ProductCards
+            key={product._id}
+            productId={product._id}
+            imageUrl={product.imageUrl}
+            discountBadge={product.discountBadge}
+            brandName={product.brandName}
+            productName={product.productName}
+            size={product.size}
+            rating={product.rating}
+            price={product.price}
+            strikedPrice={product.strikedPrice} />)}
         </SimpleGrid>
       </Box>
     </Box>
