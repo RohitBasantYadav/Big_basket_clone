@@ -14,7 +14,8 @@ import {
   MenuList,
   MenuItem,
   Divider,
-  Text
+  Text,
+  VStack
 } from "@chakra-ui/react";
 import { ArrowRightIcon, SearchIcon } from "@chakra-ui/icons";
 import { FaBagShopping, FaCaretDown, FaCompass } from "react-icons/fa6";
@@ -31,10 +32,10 @@ import axios from "axios";
 const Navbar = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [search,setSearch] = useState("")
+  const [searchData, setSearchData] = useState([])
   const dispatch = useDispatch();
   const state = useSelector((state) => state.auth.isLoggedIn)
-  const {cartItem} = useSelector((state) => state.cart)
+  const { cartItem } = useSelector((state) => state.cart)
   // console.log(state);
 
   useEffect(() => {
@@ -48,15 +49,27 @@ const Navbar = () => {
     navigate("/login")
   }
 
-  const handleSearch = async(e)=>{
-    const {accessToken} = JSON.parse(localStorage.getItem("user"))
-    const baseUrl = import.meta.env.VITE_API_URL
-    const res = await axios.get(`${baseUrl}/products/allProducts?q=${e.target.value}`,{
-      headers:{
-        Authorization:`Bearer ${accessToken}`
+  const handleSearch = async (e) => {
+    try {
+      const { accessToken } = JSON.parse(localStorage.getItem("user"))
+      const baseUrl = import.meta.env.VITE_API_URL
+      let query = e.target.value;
+      if (query !=="") {
+        const res = await axios.get(`${baseUrl}/products/allProducts?q=${query}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        });
+        setSearchData(res?.data?.data);
+      } else {
+        setSearchData([]); // Clear search results when search box is empty
       }
-    })
-    console.log(res)
+      // console.log(res.data.data)
+      // console.log(res.data.totalProduct)
+      // setSearchData(res?.data?.data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
 
@@ -137,15 +150,38 @@ const Navbar = () => {
 
         {/* CART Button */}
         <HStack position="relative" spacing={0}>
-        <IconButton  onClick={()=>navigate("/cart")} colorScheme="red" icon={<FaBagShopping />} />
-        {
-          cartItem.length>0?
-          <Text position="absolute" bottom={0} right={0} borderRadius="5px" p="0px 6px" bgColor="black" color="white">{cartItem.length}</Text>
-          :
-          null
-        }
+          <IconButton onClick={() => navigate("/cart")} colorScheme="red" icon={<FaBagShopping />} />
+          {
+            cartItem.length > 0 ?
+              <Text position="absolute" bottom={0} right={0} borderRadius="5px" p="0px 6px" bgColor="black" color="white">{cartItem.length}</Text>
+              :
+              null
+          }
         </HStack>
       </HStack>
+      {/* Search Results Section */}
+      {
+        searchData.length > 0 && (
+          <VStack bg="white" boxShadow="md" p={4} spacing={4} w="40%" mx="auto">
+            {searchData.map((product) => (
+              <Box
+                key={product._id}
+                p={4}
+                borderRadius="md"
+                border="1px solid #e0e0e0"
+                width="100%"
+                cursor="pointer"
+                onClick={() => navigate(`/product/${product._id}`)}
+              >
+                <Text fontSize="lg" fontWeight="bold">{product.productName}</Text>
+                <Text>{product.brandName}</Text>
+                <Text>{product.category}</Text>
+                <Text>${product.price}</Text>
+              </Box>
+            ))}
+          </VStack>
+        )
+      }
 
 
       {/* Lower Navbar section */}
