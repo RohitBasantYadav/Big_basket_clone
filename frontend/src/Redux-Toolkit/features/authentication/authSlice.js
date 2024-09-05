@@ -18,7 +18,7 @@ export const fetchToken = createAsyncThunk("fetchToken", async (userDetails) => 
 const user = JSON.parse(localStorage.getItem("user"));
 // Initial state
 const initialState = {
-    isLoggedIn: user.isLoggedIn || false,
+    isLoggedIn: user?.isLoggedIn || false,
     accessToken: null,
     refreshToken: null,
     error: false
