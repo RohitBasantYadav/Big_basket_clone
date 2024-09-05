@@ -1,7 +1,9 @@
 const CartModel = require("../../models/cart.model")
 
 const getCartItems = async(req,res)=>{
+    // No need to pass UserId from client side as it will be taken from auth middleware
     const {userId} = req.body;
+    
     // console.log(userId)
     try {
         const cartItems = await CartModel.find({userId});

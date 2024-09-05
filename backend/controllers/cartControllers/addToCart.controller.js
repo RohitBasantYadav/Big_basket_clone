@@ -4,14 +4,15 @@ const UserModel = require("../../models/user.model");
 
 
 const addToCart = async (req, res) => {
+    // No need to pass UserId from client side as it will be taken from auth middleware
     const { productId, userId } = req.body;
+
     try {
         // console.log(req.body)
         // Find the product and user
         const product = await ProductModel.findById(productId);
         const user = await UserModel.findOne({ _id: userId });
-        // const [product, user] = Promise.all([await ProductModel.findById(productId),await UserModel.findById(userId)])
-        // console.log(product,user)
+
         if (!product || !user) {
             return res.status(404).json({ message: 'Product or user not found' });
         }

@@ -1,6 +1,7 @@
 const CartModel = require("../../models/cart.model");
 
 const removeCartItems = async(req,res)=>{
+    // No need to pass UserId from client side as it will be taken from auth middleware
     const {productId,userId} = req.body;
 
     try {
