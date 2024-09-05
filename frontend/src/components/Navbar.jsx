@@ -25,11 +25,13 @@ import logo from "../assets/big_basket_logo.png";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../Redux-Toolkit/features/authentication/authSlice";
+import axios from "axios";
 
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [search,setSearch] = useState("")
   const dispatch = useDispatch();
   const state = useSelector((state) => state.auth.isLoggedIn)
   const {cartItem} = useSelector((state) => state.cart)
@@ -45,6 +47,18 @@ const Navbar = () => {
     dispatch(logout());
     navigate("/login")
   }
+
+  const handleSearch = async(e)=>{
+    const {accessToken} = JSON.parse(localStorage.getItem("user"))
+    const baseUrl = import.meta.env.VITE_API_URL
+    const res = await axios.get(`${baseUrl}/products/allProducts?q=${e.target.value}`,{
+      headers:{
+        Authorization:`Bearer ${accessToken}`
+      }
+    })
+    console.log(res)
+  }
+
 
   const navlinks = [
     // { link: "/", label: "Home" },
@@ -68,10 +82,10 @@ const Navbar = () => {
   const menuItemsInCategory = [
     { link: "/apparels", label: "Apparel" },
     { link: "/fruits&vegetables", label: "Fruits & Vegetables" },
-    { link: "/foodgrains_oil_masala", label: "Foodgrain, Oil & Masala" },
-    { link: "/beverages", label: "Beverages" },
-    { link: "/snacks_branded_foods", label: "Snacks & Branded Foods" },
-    { link: "/dairy", label: "Dairy Products" },
+    { link: "/ghee", label: "Foodgrain, Oil & Masala" },
+    { link: "/tea", label: "Beverages" },
+    { link: "/honey", label: "Snacks & Branded Foods" },
+    { link: "/milk", label: "Dairy Products" },
     { link: "/eggs_meat_fish", label: "Eggs, Meat & Fish" },
     { link: "/baby_care", label: "Baby Care" },
     { link: "/lunch_boxes_bags", label: "Lunch Boxes & Bags" },
@@ -94,7 +108,7 @@ const Navbar = () => {
             <InputLeftElement pointerEvents='none'>
               <SearchIcon color='green.400' />
             </InputLeftElement>
-            <Input type='search' focusBorderColor="green.300" placeholder='Search for Products...' />
+            <Input onChange={handleSearch} type='search' focusBorderColor="green.300" placeholder='Search for Products...' />
           </InputGroup>
         </Box>
 

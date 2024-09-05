@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { logout } from '../Redux-Toolkit/features/authentication/authSlice';
 
 
-const Tea = () => {
+const Honey = () => {
 
   // React-router-dom hooks
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ const Tea = () => {
               queryParams.order = "desc"
             }
       
-      const res = await axios.get(`${baseUrl}/products/allProducts?category=Beverages`, {
+      const res = await axios.get(`${baseUrl}/products/allProducts?category=Snacks%20%26%20Branded%20Foods`, {
         headers: {
           "Authorization": `Bearer ${token}`
         },
@@ -149,15 +149,15 @@ const Tea = () => {
               </MenuButton>
               <MenuList borderRadius="0px">
                 <MenuOptionGroup onChange={handleFiltering} title='Filter' type='radio'>
-                  <MenuItemOption value='Society'>Society</MenuItemOption>
-                  <MenuItemOption value='Tetley'>Tetley</MenuItemOption>
-                  <MenuItemOption value='Taj Mahal'>Taj Mahal</MenuItemOption>
-                  <MenuItemOption value='Red Label'>Red Label</MenuItemOption>
-                  <MenuItemOption value='Wagh Bakri'>Wagh Bakri</MenuItemOption>
-                  <MenuItemOption value='Lipton'>Lipton</MenuItemOption>
-                  <MenuItemOption value='Girnar'>Girnar</MenuItemOption>
-                  <MenuItemOption value='Organic India'>Organic India</MenuItemOption>
-                  <MenuItemOption value='3 Roses'>3 Roses</MenuItemOption>
+                  <MenuItemOption value='Dabur'>Dabur</MenuItemOption>
+                  <MenuItemOption value='Saffola'>Saffola</MenuItemOption>
+                  <MenuItemOption value='ZANDU'>ZANDU</MenuItemOption>
+                  <MenuItemOption value='bb Royal'>bb Royal</MenuItemOption>
+                  <MenuItemOption value='Lune De Miel'>Lune De Miel</MenuItemOption>
+                  <MenuItemOption value='24 Mantra'>24 Mantra</MenuItemOption>
+                  <MenuItemOption value='Goldrops'>Goldrops</MenuItemOption>
+                  <MenuItemOption value='Pro Nature'>Pro Nature</MenuItemOption>
+                  <MenuItemOption value='American Garden'>American Garden</MenuItemOption>
                 </MenuOptionGroup>
               </MenuList>
             </Menu>
@@ -211,4 +211,6 @@ const Tea = () => {
   )
 }
 
-export default Tea
+export default Honey
+
+

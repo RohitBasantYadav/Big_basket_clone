@@ -3,13 +3,13 @@ import Home from '../pages/Home'
 import FruitsAndVegetables from '../pages/FruitsAndVegetables'
 import Ghee from '../pages/Ghee'
 import Milk from '../pages/Milk'
-import Nandini from '../pages/Nandini'
 import Tea from '../pages/Tea'
 import Login from '../pages/Login'
 import Profile from '../pages/Profile'
 import SignUp from '../pages/SignUp'
 import ProductDetail from '../pages/ProductDetail'
 import Cart from '../pages/Cart'
+import Honey from '../pages/Honey'
 
 const AllRoutes = () => {
   return (
@@ -19,7 +19,7 @@ const AllRoutes = () => {
         <Route path='/fruits&vegetables' element={<FruitsAndVegetables/>}/>
         <Route path='/ghee' element={<Ghee/>}/>
         <Route path='/milk' element={<Milk/>}/>
-        <Route path='/nandini' element={<Nandini/>}/>
+        <Route path='/honey' element={<Honey/>}/>
         <Route path='/tea' element={<Tea/>}/>
         <Route path='/cart' element={<Cart/>}/>
         <Route path='/login' element={<Login/>}/>
