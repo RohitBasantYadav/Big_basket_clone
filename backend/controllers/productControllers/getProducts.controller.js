@@ -9,11 +9,11 @@ const getProducts = async (req, res) => {
     // Filtering funcionality
     if (q) {
         filter.$or = [
-            filter.productName = { $regex: q, $option: "i" },
-            filter.category = { $regex: q, $option: "i" },
-            filter.description = { $regex: q, $option: "i" },
-            filter.brandName = { $regex: q, $option: "i" }
-        ]
+            { productName: { $regex: q, $options: "i" } },
+            { category: { $regex: q, $options: "i" } },
+            { description: { $regex: q, $options: "i" } },
+            { brandName: { $regex: q, $options: "i" } }
+        ];
     }
 
     if (category) {
