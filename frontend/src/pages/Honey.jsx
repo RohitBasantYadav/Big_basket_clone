@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Divider, Heading, HStack, Menu, MenuButton, MenuItemOption, MenuList, MenuOptionGroup, SimpleGrid, Skeleton, Stack, Text } from '@chakra-ui/react'
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Divider, Heading, HStack, Menu, MenuButton, MenuItemOption, MenuList, MenuOptionGroup, SimpleGrid, Skeleton, Stack, Text, useToast } from '@chakra-ui/react'
 import { AddIcon } from "@chakra-ui/icons";
 import ProductCards from '../components/ProductCards';
 import { useEffect, useState } from 'react';
@@ -9,6 +9,9 @@ import { logout } from '../Redux-Toolkit/features/authentication/authSlice';
 
 
 const Honey = () => {
+
+  // Chakra Ui Hooks
+  const toast = useToast();
 
   // React-router-dom hooks
   const navigate = useNavigate();
@@ -21,46 +24,46 @@ const Honey = () => {
   const [totalProduct, setTotalProduct] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [filterValue,setFilterValue] = useState("");
-  const [sortingValue,setSortingValue] = useState("");
+  const [filterValue, setFilterValue] = useState("");
+  const [sortingValue, setSortingValue] = useState("");
 
   const baseUrl = import.meta.env.VITE_API_URL;
 
   // Fetching product Data 
-  const fetchProduct = async (token,filterValue,sortingValue) => {
+  const fetchProduct = async (token, filterValue, sortingValue) => {
     setIsLoading(true)
     try {
       const queryParams = {};
 
-      if(filterValue){
+      if (filterValue) {
         queryParams.brandName = filterValue;
       }
-      
-            if(sortingValue == "priceLH"){
-              queryParams.sort = "price",
-              queryParams.order = "asc"
-            }
-      
-            if(sortingValue == "priceHL"){
-              queryParams.sort = "price",
-              queryParams.order = "desc"
-            }
-      
-            if(sortingValue == "discountLH"){
-              queryParams.sort = "discountBadge",
-              queryParams.order = "asc"
-            }
-      
-            if(sortingValue == "discountHL"){
-              queryParams.sort = "discountBadge",
-              queryParams.order = "desc"
-            }
-      
+
+      if (sortingValue == "priceLH") {
+        queryParams.sort = "price",
+          queryParams.order = "asc"
+      }
+
+      if (sortingValue == "priceHL") {
+        queryParams.sort = "price",
+          queryParams.order = "desc"
+      }
+
+      if (sortingValue == "discountLH") {
+        queryParams.sort = "discountBadge",
+          queryParams.order = "asc"
+      }
+
+      if (sortingValue == "discountHL") {
+        queryParams.sort = "discountBadge",
+          queryParams.order = "desc"
+      }
+
       const res = await axios.get(`${baseUrl}/products/allProducts?category=Snacks%20%26%20Branded%20Foods`, {
         headers: {
           "Authorization": `Bearer ${token}`
         },
-        params:queryParams
+        params: queryParams
       });
       // console.log("product",res)
       // console.log(res.data)
@@ -82,17 +85,30 @@ const Honey = () => {
 
   // Use Effect for handling sideEffect
   useEffect(() => {
-    const { accessToken } = JSON.parse(localStorage.getItem("user"));
-    fetchProduct(accessToken,filterValue,sortingValue)
-  }, [filterValue,sortingValue]);
+    const userData = JSON.parse(localStorage.getItem("user"));
+    if (userData) {
+      const { accessToken } = userData
+      fetchProduct(accessToken, filterValue, sortingValue);
+    }
+    else {
+      navigate("/login");
+      toast({
+        position: "top",
+        title: `Please login before accessing this page`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      })
+    }
+  }, [filterValue, sortingValue]);
 
   // Filter menu function
-  const handleFiltering =(e)=>{
+  const handleFiltering = (e) => {
     setFilterValue(e);
   };
 
   // Sorting menu function
-  const handleSorting = (e)=>{
+  const handleSorting = (e) => {
     setSortingValue(e);
   }
 

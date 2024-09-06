@@ -47,6 +47,7 @@ const Login = () => {
     password: "",
   })
 
+  // React- Redux Hook
   const dispatch = useDispatch();
   const { isLoggedIn } = useSelector((state) => state.auth);
   // console.log(isLoggedIn)
@@ -73,26 +74,28 @@ const Login = () => {
   // hadling after Login button is Clicked
   const handleSubmit = (e) => {
     e.preventDefault();
-    //dispatching user
-    // console.log(dispatch(fetchToken(userDetail)))
 
+    // console.log(userDetail)
+    //dispatching user details
     //Dispatching fetchToken for Login Action
     const dispatchedAction = dispatch(fetchToken(userDetail));
 
     // Handling fetchToken for showing Toast 
     dispatchedAction.then((res) => {
-      console.log(res.error.message)
-      const statusCode = res.error.message;
+      // console.log("LoginRes:", res?.payload?.msg)
+      // console.log("LoginMsg", res?.error?.message)
+      const statusCode = res?.error?.message;
       if (statusCode == "400" || statusCode == "404") {
-        toast({
+        return toast({
           position: "top",
           title: `Invalid Credentials`,
           status: "error",
           duration: 4000,
           isClosable: true,
         })
-      } else {
-        toast({
+      }
+      if (res.payload.msg == 'Login Successful') {
+        return toast({
           position: "top",
           title: `Login Successfull`,
           status: "success",
@@ -102,11 +105,11 @@ const Login = () => {
       }
 
     })
-
     setUserDetail({
       email: "",
       password: ""
     });
+
   }
   // Toast Section 
 

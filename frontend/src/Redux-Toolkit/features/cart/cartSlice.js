@@ -25,14 +25,13 @@ const cartSlice = (createSlice({
     name: "cart",
     initialState,
     reducers: {
-        addToCart: (state, action) => {
-            
-        }
+
     },
     extraReducers: (builder) => {
         builder.addCase(fetchCartItem.fulfilled, (state, action) => {
             // console.log(action.payload)
             state.cartItem = action.payload;
+            localStorage.setItem("cartItems",JSON.stringify(action.payload))
         });
         builder.addCase(fetchCartItem.rejected, (state, action) => {
             // console.log(action.error.message)
@@ -42,5 +41,5 @@ const cartSlice = (createSlice({
 }))
 
 
-export const { addToCart, updateCartQuantity, removeCartItem } = cartSlice.actions
+// export const { addToCart, updateCartQuantity, removeCartItem } = cartSlice.actions
 export default cartSlice.reducer;

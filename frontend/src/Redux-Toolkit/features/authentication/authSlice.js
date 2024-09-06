@@ -6,7 +6,6 @@ export const fetchToken = createAsyncThunk("fetchToken", async (userDetails) => 
     try {
         const baseUrl = import.meta.env.VITE_API_URL;
         const res = await axios.post(`${baseUrl}/user/auth/login`, userDetails);
-        // console.log(data.token);
         // console.log(res.data.accessToken, res.data.refreshToken)
         return res?.data;
     } catch (error) {
@@ -33,12 +32,12 @@ const authSlice = createSlice({
         // },
         logout: (state) => {
             state.isLoggedIn = false,
-            state.accessToken = null;
+                state.accessToken = null;
             state.refreshToken = null;
             state.error = false;
             // localStorage.removeItem("accessToken");
             // localStorage.removeItem("refreshToken");
-            localStorage.setItem("user",JSON.stringify(state));
+            localStorage.setItem("user", JSON.stringify(state));
         }
     },
     // login logic is here
@@ -49,7 +48,7 @@ const authSlice = createSlice({
             state.isLoggedIn = true;
             state.accessToken = action.payload.accessToken;
             state.refreshToken = action.payload.refreshToken;
-            localStorage.setItem("user",JSON.stringify(state));
+            localStorage.setItem("user", JSON.stringify(state));
             // localStorage.setItem("accessToken", action.payload.accessToken);
             // localStorage.setItem("refreshToken", action.payload.refreshToken);
         });

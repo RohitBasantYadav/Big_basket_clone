@@ -44,16 +44,30 @@ const CartItem = ({ _id, productId, userId, quantity, price }) => {
     }
 
     useEffect(() => {
-        const { accessToken } = JSON.parse(localStorage.getItem("user"));
-        fetchProduct(accessToken)
+        const userData = JSON.parse(localStorage.getItem("user"));
+        if(userData){
+          const {accessToken} = userData
+        fetchProduct(accessToken);
+        }
+        else{
+          navigate("/login");
+          toast({
+            position: "top",
+            title: `Please login before accessing this page`,
+            status: "error",
+            duration: 4000,
+            isClosable: true,
+          })
+        }
     }, [])
 
+
     // Quantity handler buttons Funtionality
-    const incrementCartQuantity = ()=>{
+    const incrementCartQuantity = async()=>{
         try {
             const { accessToken } = JSON.parse(localStorage.getItem("user"));
             const baseUrl = import.meta.env.VITE_API_URL;
-            const res = axios.patch(`${baseUrl}/cart/updateCart`,{ productId,inc:1 },{
+            const res = await axios.patch(`${baseUrl}/cart/updateCart`,{ productId,inc:1 },{
                 headers:{
                     Authorization:`Bearer ${accessToken}`
                 }
@@ -82,11 +96,11 @@ const CartItem = ({ _id, productId, userId, quantity, price }) => {
         }
     }
 
-    const decrementCartQuantity = ()=>{
+    const decrementCartQuantity = async()=>{
         try {
             const { accessToken } = JSON.parse(localStorage.getItem("user"));
             const baseUrl = import.meta.env.VITE_API_URL;
-            const res = axios.patch(`${baseUrl}/cart/updateCart`,{ productId,dec:1 },{
+            const res = await axios.patch(`${baseUrl}/cart/updateCart`,{ productId,dec:1 },{
                 headers:{
                     Authorization:`Bearer ${accessToken}`
                 }
@@ -116,21 +130,21 @@ const CartItem = ({ _id, productId, userId, quantity, price }) => {
     }
 
     // Remove Item Button functionality
-    const removeItem = () => {
+    const removeItem = async() => {
         try {
             const { accessToken } = JSON.parse(localStorage.getItem("user"));
             const baseUrl = import.meta.env.VITE_API_URL;
-            const res = axios.delete(`${baseUrl}/cart/remove`,{
+            const res = await axios.delete(`${baseUrl}/cart/remove`,{
                 headers:{
                     Authorization:`Bearer ${accessToken}`
                 },
                 data: { productId }
             })
-            console.log(res)
+            // console.log(res)
             if(res?.status == 200){
                 toast({
                     position: "top",
-                    title: `Product Added to Cart Successfully`,
+                    title: `Product Deleted from the Cart Successfully`,
                     status: "success",
                     duration: 4000,
                     isClosable: true,

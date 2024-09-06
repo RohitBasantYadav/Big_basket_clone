@@ -17,7 +17,7 @@ const ProductCards = ({imageUrl,discountBadge,brandName,productName,size,price,s
                     Authorization:`Bearer ${accessToken}`
                 }
             })
-            console.log(res);
+            // console.log(res);
             if(res?.status == 200){
                 toast({
                     position: "top",
@@ -37,7 +37,7 @@ const ProductCards = ({imageUrl,discountBadge,brandName,productName,size,price,s
                     isClosable: true,
                   })
             }
-            console.log(error)
+            // console.log(error)
         }
 }
 

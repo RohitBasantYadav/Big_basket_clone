@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Divider, Heading, HStack, Menu, MenuButton, MenuItemOption, MenuList, MenuOptionGroup, SimpleGrid, Skeleton, Stack, Text } from '@chakra-ui/react'
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Divider, Heading, HStack, Menu, MenuButton, MenuItemOption, MenuList, MenuOptionGroup, SimpleGrid, Skeleton, Stack, Text, useToast } from '@chakra-ui/react'
 import { AddIcon } from "@chakra-ui/icons";
 import ProductCards from '../components/ProductCards';
 import { useEffect, useState } from 'react';
@@ -10,6 +10,9 @@ import { logout } from '../Redux-Toolkit/features/authentication/authSlice';
 
 const Ghee = () => {
 
+  // Chakra Hook
+  const toast = useToast();
+  
   // React-router-dom hooks
   const navigate = useNavigate();
 
@@ -82,8 +85,21 @@ const Ghee = () => {
 
   // Use Effect for handling sideEffect
   useEffect(() => {
-    const { accessToken } = JSON.parse(localStorage.getItem("user"));
-    fetchProduct(accessToken,filterValue,sortingValue)
+    const userData = JSON.parse(localStorage.getItem("user"));
+    if(userData){
+      const {accessToken} = userData
+    fetchProduct(accessToken,filterValue,sortingValue);
+    }
+    else{
+      navigate("/login");
+      toast({
+        position: "top",
+        title: `Please login before accessing this page`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      })
+    }
   }, [filterValue,sortingValue]);
 
   // Filter menu function

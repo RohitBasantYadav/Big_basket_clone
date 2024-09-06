@@ -75,8 +75,21 @@ const ProductDetail = () => {
   }
 
   useEffect(() => {
-    const { accessToken } = JSON.parse(localStorage.getItem("user"));
-    fetchProduct(accessToken)
+    const userData = JSON.parse(localStorage.getItem("user"));
+    if(userData){
+      const {accessToken} = userData
+    fetchProduct(accessToken);
+    }
+    else{
+      navigate("/login");
+      toast({
+        position: "top",
+        title: `Please login before accessing this page`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      })
+    }
   }, [])
 
   // Loading while fetch

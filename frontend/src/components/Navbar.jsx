@@ -25,24 +25,37 @@ import './componentsStyleSheet/Navbar.css';
 import logo from "../assets/big_basket_logo.png";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../Redux-Toolkit/features/authentication/authSlice";
+import { fetchToken, logout } from "../Redux-Toolkit/features/authentication/authSlice";
 import axios from "axios";
 
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [searchData, setSearchData] = useState([])
+  const [searchData, setSearchData] = useState([]);
+  // const [cartItem,setCartItem] = useState(0);
   const dispatch = useDispatch();
   const state = useSelector((state) => state.auth.isLoggedIn)
-  const { cartItem } = useSelector((state) => state.cart)
+  const {cartItem} = useSelector((state) => state.cart)
+
   // console.log(state);
+
+  // Checking for cart count 
+
+  // useEffect(()=>{
+  //   dispatch(fetchToken());
+  //   const cartItems = JSON.parse(localStorage.getItem("cartItems"));
+  //   if(cartItems){
+  //     setCartItem(cartItems.length)
+  //   }
+  // },[])
 
   useEffect(() => {
     const userDetail = JSON.parse(localStorage.getItem("user"));
     // Checking if user is loggedIn or not from localstroage.
     setIsLoggedIn(userDetail?.isLoggedIn);
   }, [state, isLoggedIn])
+
 
   const handleLogout = () => {
     dispatch(logout());
@@ -54,7 +67,8 @@ const Navbar = () => {
       const { accessToken } = JSON.parse(localStorage.getItem("user"))
       const baseUrl = import.meta.env.VITE_API_URL
       let query = e.target.value;
-      if (query !=="") {
+      const newTrimedQuery = query.trim();
+      if (newTrimedQuery) {
         const res = await axios.get(`${baseUrl}/products/allProducts?q=${query}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`

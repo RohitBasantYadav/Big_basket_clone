@@ -10,6 +10,7 @@ import SignUp from '../pages/SignUp'
 import ProductDetail from '../pages/ProductDetail'
 import Cart from '../pages/Cart'
 import Honey from '../pages/Honey'
+// import Checkout from '../pages/Checkout'
 
 const AllRoutes = () => {
   return (
@@ -25,6 +26,7 @@ const AllRoutes = () => {
         <Route path='/login' element={<Login/>}/>
         <Route path='/signup' element={<SignUp/>}/>
         <Route path='/profile' element={<Profile/>}/>
+        {/* <Route path='/checkout' element={<Checkout/>}/> */}
         <Route path='/product/productDetail/:id' element={<ProductDetail/>}/>
       </Routes>
     </div>
