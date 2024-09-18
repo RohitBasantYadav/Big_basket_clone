@@ -4,10 +4,10 @@ import axios from "axios";
 export const fetchCartItem = createAsyncThunk("fetchCartItem", async () => {
     const baseUrl = import.meta.env.VITE_API_URL;
     try {
-        const { accessToken } = JSON.parse(localStorage.getItem("user"));
+        const userData = JSON.parse(localStorage.getItem("user"));
         const res = await axios.get(`${baseUrl}/cart/cartItems`, {
             headers: {
-                Authorization: `Bearer ${accessToken}`
+                Authorization: `Bearer ${userData?.accessToken}`
             }
         });
         return res.data.data; // Return only the data (cart items)
@@ -24,9 +24,7 @@ const initialState = {
 const cartSlice = (createSlice({
     name: "cart",
     initialState,
-    reducers: {
-
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder.addCase(fetchCartItem.fulfilled, (state, action) => {
             // console.log(action.payload)

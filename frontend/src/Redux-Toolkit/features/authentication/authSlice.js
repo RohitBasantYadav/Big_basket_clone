@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios'
 
 // Thunk Middleware in RTK
+// Login Thunk
 export const fetchToken = createAsyncThunk("fetchToken", async (userDetails) => {
     try {
         const baseUrl = import.meta.env.VITE_API_URL;
@@ -32,7 +33,7 @@ const authSlice = createSlice({
         // },
         logout: (state) => {
             state.isLoggedIn = false,
-                state.accessToken = null;
+            state.accessToken = null;
             state.refreshToken = null;
             state.error = false;
             // localStorage.removeItem("accessToken");

@@ -30,7 +30,7 @@ const Honey = () => {
   const baseUrl = import.meta.env.VITE_API_URL;
 
   // Fetching product Data 
-  const fetchProduct = async (token, filterValue, sortingValue) => {
+  const fetchProduct = async (filterValue, sortingValue) => {
     setIsLoading(true)
     try {
       const queryParams = {};
@@ -60,9 +60,6 @@ const Honey = () => {
       }
 
       const res = await axios.get(`${baseUrl}/products/allProducts?category=Snacks%20%26%20Branded%20Foods`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        },
         params: queryParams
       });
       // console.log("product",res)
@@ -85,21 +82,7 @@ const Honey = () => {
 
   // Use Effect for handling sideEffect
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("user"));
-    if (userData) {
-      const { accessToken } = userData
-      fetchProduct(accessToken, filterValue, sortingValue);
-    }
-    else {
-      navigate("/login");
-      toast({
-        position: "top",
-        title: `Please login before accessing this page`,
-        status: "error",
-        duration: 4000,
-        isClosable: true,
-      })
-    }
+    fetchProduct(filterValue, sortingValue);
   }, [filterValue, sortingValue]);
 
   // Filter menu function

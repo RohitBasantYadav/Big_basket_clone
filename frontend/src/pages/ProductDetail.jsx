@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { logout } from '../Redux-Toolkit/features/authentication/authSlice';
 
 const ProductDetail = () => {
+  const [addLoadingButton, setAddLoadingButton] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -17,15 +18,19 @@ const ProductDetail = () => {
 
   const addToCart = async () => {
     const baseUrl = import.meta.env.VITE_API_URL;
+
+
+    setAddLoadingButton(true);
     try {
-      const { accessToken } = JSON.parse(localStorage.getItem("user"))
+      const userData = JSON.parse(localStorage.getItem("user"))
       const res = await axios.post(`${baseUrl}/cart/addToCart`, { productId: id }, {
         headers: {
-          Authorization: `Bearer ${accessToken}`
+          Authorization: `Bearer ${userData?.accessToken}`
         }
       })
-      console.log(res);
+      // console.log(res);
       if (res?.status == 200) {
+        setAddLoadingButton(false)
         toast({
           position: "top",
           title: `Product Added to Cart Successfully`,
@@ -34,7 +39,10 @@ const ProductDetail = () => {
           isClosable: true,
         })
       }
+      // console.log(res)
     } catch (error) {
+      // console.log(error)
+      setAddLoadingButton(false)
       if (error.response.status == 404) {
         toast({
           position: "top",
@@ -44,21 +52,31 @@ const ProductDetail = () => {
           isClosable: true,
         })
       }
-      console.log(error)
+
+      if (error.response.status == 401) {
+        toast({
+          position: "top",
+          title: `Please login before adding item to cart`,
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+        })
+        dispatch(logout());
+        navigate("/login")
+      }
+      // console.log(error)
     }
   }
 
-  const baseUrl = import.meta.env.VITE_API_URL;
 
-  const fetchProduct = async (token) => {
+
+  // Fetching single product data
+  const fetchProduct = async () => {
+    const baseUrl = import.meta.env.VITE_API_URL;
     setIsLoading(true)
     try {
-      const res = await axios.get(`${baseUrl}/products/singleProduct/${id}`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      console.log("product", res)
+      const res = await axios.get(`${baseUrl}/products/singleProduct/${id}`);
+      // console.log("product", res)
       // console.log(res.data)
       setProduct(res?.data?.data)
       setIsLoading(false)
@@ -75,21 +93,7 @@ const ProductDetail = () => {
   }
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("user"));
-    if(userData){
-      const {accessToken} = userData
-    fetchProduct(accessToken);
-    }
-    else{
-      navigate("/login");
-      toast({
-        position: "top",
-        title: `Please login before accessing this page`,
-        status: "error",
-        duration: 4000,
-        isClosable: true,
-      })
-    }
+    fetchProduct();
   }, [])
 
   // Loading while fetch
@@ -145,7 +149,7 @@ const ProductDetail = () => {
           <Text fontWeight="700">{`Price: ₹${product.price}`}</Text>
           <Text fontWeight="700" color="#466f00">{`You Save: ${product.discountBadge}% OFF`}</Text>
           <Text color="gray">(inclusive of all taxes)</Text>
-          <Button onClick={addToCart} variant='solid' colorScheme='red' w="100%" mt="20px" h="60px">
+          <Button isLoading={addLoadingButton} loadingText="Adding..." onClick={addToCart} variant='solid' colorScheme='red' w="100%" mt="20px" h="60px">
             Add to cart
           </Button>
         </Stack>

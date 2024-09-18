@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../Redux-Toolkit/features/authentication/authSlice";
+import { fetchCartItem } from "../Redux-Toolkit/features/cart/cartSlice";
 
 const CartItem = ({ _id, productId, userId, quantity, price }) => {
     // console.log(props)
@@ -12,6 +13,9 @@ const CartItem = ({ _id, productId, userId, quantity, price }) => {
     const dispatch = useDispatch();
     const [product, setProduct] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [incButtonLoading, setIncButtonLoading] = useState(false);
+    const [decButtonLoading, setDecButtonLoading] = useState(false);
+    const [removeButtonLoading, setRemoveButtonLoading] = useState(false);
     const [error, setError] = useState(false);
     // const [count, setCount] = useState(2);
     const toast = useToast();
@@ -46,7 +50,7 @@ const CartItem = ({ _id, productId, userId, quantity, price }) => {
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem("user"));
         if(userData){
-          const {accessToken} = userData
+          const {accessToken} = userData;
         fetchProduct(accessToken);
         }
         else{
@@ -64,6 +68,7 @@ const CartItem = ({ _id, productId, userId, quantity, price }) => {
 
     // Quantity handler buttons Funtionality
     const incrementCartQuantity = async()=>{
+        setIncButtonLoading(true);
         try {
             const { accessToken } = JSON.parse(localStorage.getItem("user"));
             const baseUrl = import.meta.env.VITE_API_URL;
@@ -72,8 +77,10 @@ const CartItem = ({ _id, productId, userId, quantity, price }) => {
                     Authorization:`Bearer ${accessToken}`
                 }
             })
-            console.log(res)
+            // console.log(res)
             if(res?.status == 200){
+                dispatch(fetchCartItem());
+                setIncButtonLoading(false);
                 toast({
                     position: "top",
                     title: `Product quantity Increased`,
@@ -83,6 +90,7 @@ const CartItem = ({ _id, productId, userId, quantity, price }) => {
                   })
             }
         } catch (error) {
+            setIncButtonLoading(false)
             if(error.response.status == 404){
                 toast({
                     position: "top",
@@ -97,6 +105,7 @@ const CartItem = ({ _id, productId, userId, quantity, price }) => {
     }
 
     const decrementCartQuantity = async()=>{
+        setDecButtonLoading(true)
         try {
             const { accessToken } = JSON.parse(localStorage.getItem("user"));
             const baseUrl = import.meta.env.VITE_API_URL;
@@ -105,17 +114,20 @@ const CartItem = ({ _id, productId, userId, quantity, price }) => {
                     Authorization:`Bearer ${accessToken}`
                 }
             })
-            console.log(res)
+            // console.log(res)
             if(res?.status == 200){
+                setDecButtonLoading(false)
+                dispatch(fetchCartItem());
                 toast({
                     position: "top",
-                    title: `Product quantity Increased`,
+                    title: `Product quantity decreased`,
                     status: "success",
                     duration: 4000,
                     isClosable: true,
                   })
             }
         } catch (error) {
+            setDecButtonLoading(false)
             if(error.response.status == 404){
                 toast({
                     position: "top",
@@ -125,12 +137,13 @@ const CartItem = ({ _id, productId, userId, quantity, price }) => {
                     isClosable: true,
                   })
             }
-            console.log("error",error)
+            // console.log("error",error)
         }
     }
 
     // Remove Item Button functionality
     const removeItem = async() => {
+        setRemoveButtonLoading(true)
         try {
             const { accessToken } = JSON.parse(localStorage.getItem("user"));
             const baseUrl = import.meta.env.VITE_API_URL;
@@ -142,6 +155,8 @@ const CartItem = ({ _id, productId, userId, quantity, price }) => {
             })
             // console.log(res)
             if(res?.status == 200){
+                setRemoveButtonLoading(false)
+                dispatch(fetchCartItem());
                 toast({
                     position: "top",
                     title: `Product Deleted from the Cart Successfully`,
@@ -151,6 +166,7 @@ const CartItem = ({ _id, productId, userId, quantity, price }) => {
                   })
             }
         } catch (error) {
+            setRemoveButtonLoading(false)
             if(error.response.status == 404){
                 toast({
                     position: "top",
@@ -217,11 +233,11 @@ const CartItem = ({ _id, productId, userId, quantity, price }) => {
                 <HStack justify="space-around" w="50%">
                     <VStack>
                         <ButtonGroup size='sm' isAttached variant='outline'>
-                            <IconButton onClick={incrementCartQuantity} aria-label='Add to friends' icon={<AddIcon />} />
+                            <IconButton isLoading={incButtonLoading} onClick={incrementCartQuantity} aria-label='Add to friends' icon={<AddIcon />} />
                             <Button w="100px">{quantity}</Button>
-                            <IconButton onClick={decrementCartQuantity} aria-label='Add to friends' icon={<MinusIcon />} />
+                            <IconButton isLoading={decButtonLoading} onClick={decrementCartQuantity} aria-label='Add to friends' icon={<MinusIcon />} />
                         </ButtonGroup>
-                        <Button onClick={removeItem} w="100%" colorScheme="red">Remove</Button>
+                        <Button loadingText="Removing..." isLoading={removeButtonLoading} onClick={removeItem} w="100%" colorScheme="red">Remove</Button>
                     </VStack>
                     <Box>
                         <Text fontWeight="bold">{`₹${product.price * quantity}`}</Text>

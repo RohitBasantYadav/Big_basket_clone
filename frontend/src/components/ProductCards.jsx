@@ -1,24 +1,30 @@
 import { Box, Button, Card, CardBody, CardFooter, HStack, Image, Stack, Text, useToast,  } from "@chakra-ui/react"
 import axios from "axios";
 import { useNavigate } from "react-router-dom"
+import { logout } from "../Redux-Toolkit/features/authentication/authSlice";
+import { useDispatch } from "react-redux";
+import { useState } from "react";
 
 
 const ProductCards = ({imageUrl,discountBadge,brandName,productName,size,price,strikedPrice,productId}) => {
-
+    const [addLoadingButton, setAddLoadingButton] = useState(false);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const toast = useToast()
     const baseUrl = import.meta.env.VITE_API_URL;
     
     const addToCart = async()=>{
+        setAddLoadingButton(true);
         try {
-            const {accessToken} = JSON.parse(localStorage.getItem("user"))
+            const userData = JSON.parse(localStorage.getItem("user"))
             const res = await axios.post(`${baseUrl}/cart/addToCart`,{productId:productId},{
                 headers:{
-                    Authorization:`Bearer ${accessToken}`
+                    Authorization:`Bearer ${userData?.accessToken}`
                 }
             })
             // console.log(res);
             if(res?.status == 200){
+                setAddLoadingButton(false)
                 toast({
                     position: "top",
                     title: `Product Added to Cart Successfully`,
@@ -27,7 +33,10 @@ const ProductCards = ({imageUrl,discountBadge,brandName,productName,size,price,s
                     isClosable: true,
                   })
             }
+            // console.log(res)
         } catch (error) {
+            // console.log(error)
+            setAddLoadingButton(false)
             if(error.response.status == 404){
                 toast({
                     position: "top",
@@ -36,6 +45,18 @@ const ProductCards = ({imageUrl,discountBadge,brandName,productName,size,price,s
                     duration: 4000,
                     isClosable: true,
                   })
+            }
+            
+            if(error.response.status == 401){
+                toast({
+                    position: "top",
+                    title: `Please login before adding item to cart`,
+                    status: "error",
+                    duration: 2000,
+                    isClosable: true,
+                  })
+                  dispatch(logout());
+                  navigate("/login")
             }
             // console.log(error)
         }
@@ -75,7 +96,7 @@ const ProductCards = ({imageUrl,discountBadge,brandName,productName,size,price,s
                 </CardBody>
 
                 <CardFooter>
-                        <Button onClick={addToCart} variant='outline' colorScheme='red' w="100%" _hover={{bgColor:"red", color:"white"}}>
+                        <Button isLoading={addLoadingButton} loadingText="Adding..." onClick={addToCart} variant='outline' colorScheme='red' w="100%" _hover={{bgColor:"red", color:"white"}}>
                             Add
                         </Button>
                 </CardFooter>

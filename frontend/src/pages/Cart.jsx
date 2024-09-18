@@ -5,21 +5,39 @@ import { useEffect } from "react";
 import { fetchCartItem } from "../Redux-Toolkit/features/cart/cartSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { logout } from "../Redux-Toolkit/features/authentication/authSlice";
 
 
 
 
 const Cart = () => {
+    const navigate = useNavigate();
     const toast = useToast();
     const dispatch = useDispatch();
     const cartItems = useSelector((state) => state.cart.cartItem)
-    // console.log(state)
+    // console.log(cartItems)
     // console.log("a")
 
     // Making fetchRequest through reduxThunk
     useEffect(() => {
-        dispatch(fetchCartItem())
-    }, [dispatch, cartItems]);
+        dispatch(fetchCartItem()).then((res)=>{
+            // console.log(res);
+            if(res?.error?.message == "401"){
+                toast({
+                    position: 'top',
+                    title: 'Please Login before accessing CartPage',
+                    status: 'error',
+                    duration: 2000,
+                    isClosable: true,
+                })
+                dispatch(logout());
+                navigate("/login");
+            }
+        }).catch((error)=>{
+            console.log("errorInCart",error)
+        })
+
+    }, [navigate,toast,dispatch]);
 
     const subTotal = cartItems.reduce((accum, currValue) => (accum + currValue.price) * currValue.quantity, 0);
     // console.log(subTotal)
@@ -39,20 +57,22 @@ const Cart = () => {
                 });
             }));
 
+            toast({
+                position: 'top',
+                title: 'Your Order is placed successfully',
+                description: "You will get you delivery within 1 day",
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            });
+
             // Once all deletions are complete, refresh the page
-            // window.location.reload();
+            window.location.reload();
 
         } catch (error) {
             console.log(error)
         }
-        toast({
-            position: 'top',
-            title: 'Your Order is placed successfully',
-            description: "You will get you delivery within 1 day",
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-        });
+
 
     }
 
