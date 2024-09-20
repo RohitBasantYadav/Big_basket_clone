@@ -152,7 +152,7 @@ const FruitsAndVegetables = () => {
 
 
   return (
-    <Box w="80%" m="auto">
+    <Box w={{sm:"95%",md:"90%",lg:"85%",xl:"80%"}} m="auto">
       <Heading fontSize={24} textAlign="center">Fruits & Vegetables Page</Heading>
       <Box m="20px 0">
         <HStack justify="space-between">
@@ -208,7 +208,7 @@ const FruitsAndVegetables = () => {
       <Divider borderColor="gray" borderStyle="dashed" />
 
       <Box m="10px 0">
-        <SimpleGrid columns={4} spacing={5}>
+        <SimpleGrid columns={{sm:1,md:3,lg:3,xl:4}} spacing={5}>
           {products.map((product) => <ProductCards
             key={product._id}
             productId={product._id}
